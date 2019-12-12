@@ -7,6 +7,24 @@
 ## General Information
 ```We are currently in the process to publish a paper as a general guidance which allows everybody (background independent) to train, validate, and evaluate their own target species, by using this deep learning framework, in order to segment/detect valuable signals within noisy bioacoustic recordings. Goal is to provide the community with an animal independent sound segementation toolkit to label their data. Once the guidline is finished we will announce and link it also here.```
 
+## Reference
+```If ORCA-SPOT is used for your own research please cite the following publication: ORCA-SPOT: An Automatic Killer Whale Sound Detection Toolkit Using Deep Learning (https://www.nature.com/articles/s41598-019-47335-w)```
+
+```
+@article{bergler:2019,
+author = {Bergler, Christian and Schröter, Hendrik and Cheng, Rachael Xi and Barth, Volker and Weber, Michael and Noeth, Elmar and Hofer, Heribert and Maier, Andreas},
+year = {2019},
+month = {12},
+pages = {},
+title = {ORCA-SPOT: An Automatic Killer Whale Sound Detection Toolkit Using Deep Learning},
+volume = {9},
+journal = {Scientific Reports},
+doi = {10.1038/s41598-019-47335-w}
+}
+```
+## License
+```GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007 (GNU GPLv3)```
+
 ## Python, Python Libraries, and Version
 ```ORCA-SPOT is a deep learning algorithm which was implemented in Python (Version=3.6) (Operating System: Linux) together with the deep learning framework PyTorch (Version=1.3.0, TorchVision=0.4.1). Moreover it requires the following Python libraries: Pillow, MatplotLib, Librosa, Soundfile, TensorboardX (recent versions).```
 
@@ -57,23 +75,4 @@
 ```Example Command:```
 
 ```predict.py -d --model_path model_dir/model.pk --log_dir log_dir --sequence_len 2 --hop 0.5 --threshold 0.75 --num_workers 8 --no_cuda audio_tape.wav```
-
-## Reference
-```If ORCA-SPOT is used for your own research please cite the following publication: ORCA-SPOT: An Automatic Killer Whale Sound Detection Toolkit Using Deep Learning (https://www.nature.com/articles/s41598-019-47335-w)```
-
-```
-@article{bergler:2019,
-author = {Bergler, Christian and Schröter, Hendrik and Cheng, Rachael Xi and Barth, Volker and Weber, Michael and Noeth, Elmar and Hofer, Heribert and Maier, Andreas},
-year = {2019},
-month = {12},
-pages = {},
-title = {ORCA-SPOT: An Automatic Killer Whale Sound Detection Toolkit Using Deep Learning},
-volume = {9},
-journal = {Scientific Reports},
-doi = {10.1038/s41598-019-47335-w}
-}
-```
-
-## License
-```sh ```
 
