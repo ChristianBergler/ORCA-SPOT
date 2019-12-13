@@ -225,10 +225,6 @@ parser.add_argument(
     help="Use max pooling after the initial convolution layer.",
 )
 
-parser.add_argument(
-    "--latent_dim", type=int, default=1024, help="Dimensionality to reduce to."
-)
-
 ARGS = parser.parse_args()
 ARGS.cuda = torch.cuda.is_available() and ARGS.cuda
 ARGS.device = torch.device("cuda") if ARGS.cuda else torch.device("cpu")
