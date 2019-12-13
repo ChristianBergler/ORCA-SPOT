@@ -147,7 +147,7 @@ parser.add_argument(
     "--lr_patience_epochs",
     metavar="N",
     type=int,
-    default=5,
+    default=8,
     help="Decay the learning rate every N epochs.",
 )
 
