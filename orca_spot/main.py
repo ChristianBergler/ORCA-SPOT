@@ -145,10 +145,9 @@ parser.add_argument(
 
 parser.add_argument(
     "--lr_patience_epochs",
-    metavar="N",
     type=int,
     default=8,
-    help="Decay the learning rate every N epochs.",
+    help="Decay the learning rate after N/epochs_per_eval epochs without any improvements on the validation set.",
 )
 
 parser.add_argument(
@@ -163,7 +162,7 @@ parser.add_argument(
     metavar="N",
     type=int,
     default=20,
-    help="Decay the learning rate every N epochs.",
+    help="Early stopping (stop training) after N/epochs_per_eval epochs without any improvements on the validation set.",
 )
 
 """ Input parameters """
