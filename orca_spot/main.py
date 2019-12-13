@@ -59,28 +59,24 @@ parser.add_argument(
 parser.add_argument(
     "--data_dir",
     type=str,
-    default="/tmp/data",
     help="The path to the dataset directory.",
 )
 
 parser.add_argument(
     "--cache_dir",
     type=str,
-    default="/tmp/cache",
     help="The path to the dataset directory.",
 )
 
 parser.add_argument(
     "--model_dir",
     type=str,
-    default="/tmp/model",
     help="The directory where the model will be stored.",
 )
 
 parser.add_argument(
     "--checkpoint_dir",
     type=str,
-    default="/tmp/checkpoints",
     help="The directory where the checkpoints will be stored.",
 )
 
@@ -91,7 +87,6 @@ parser.add_argument(
 parser.add_argument(
     "--summary_dir",
     type=str,
-    default="/tmp/summaries",
     help="The directory to store the tensorboard summaries.",
 )
 
