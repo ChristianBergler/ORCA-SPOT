@@ -361,7 +361,7 @@ if __name__ == "__main__":
             batch_size=ARGS.batch_size,
             shuffle=True,
             num_workers=ARGS.num_workers,
-            drop_last=False,
+            drop_last=False if split == "val" or split == "test" else True,
             pin_memory=True,
         )
         for split in split_fracs.keys()
