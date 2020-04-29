@@ -7,6 +7,7 @@ Last Access: 12.12.2019
 
 import os
 import queue
+import platform
 
 import torch.multiprocessing as mp
 
@@ -38,8 +39,10 @@ class AsyncFileReader(object):
             )
             for _ in range(n_readers)
         ]
-        for w in self._read_workers:
-            w.start()
+
+        if platform.system() != "Windows":
+            for w in self._read_workers:
+                w.start()
         self.n_retries = n_retries
 
     def __call__(self, file_name):
@@ -88,8 +91,10 @@ class AsyncFileWriter(object):
             )
             for _ in range(n_writers)
         ]
-        for w in self._write_workers:
-            w.start()
+
+        if platform.system() != "Windows":
+            for w in self._write_workers:
+                w.start()
 
     def __call__(self, file_name, data):
         self._write_queue.put((file_name, data))

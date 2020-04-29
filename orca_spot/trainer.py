@@ -10,6 +10,7 @@ import copy
 import math
 import time
 import operator
+import platform
 import numpy as np
 import utils.metrics as m
 
@@ -53,7 +54,7 @@ class Trainer:
             run_name = prefix + "_" if prefix != "" else ""
             run_name += "{time}-{host}".format(
                 time=time.strftime("%y-%m-%d-%H-%M", time.localtime()),
-                host=os.uname()[1],
+                host=platform.uname()[1],
             )
             summary_dir = os.path.join(summary_dir, run_name)
 
