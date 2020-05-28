@@ -216,6 +216,14 @@ class Normalize(object):
             (spec - self.ref_level_db - self.min_level_db) / -self.min_level_db, 0, 1
         )
 
+"""Normalize min/max scale to 0..1"""
+class MinMaxNormalize(object):
+
+    def __call__(self, spectrogram):
+        spectrogram -= spectrogram.min()
+        spectrogram /= spectrogram.max()
+        return spectrogram
+
 """Turns a spectrogram from the power/amplitude scale to the decibel scale."""
 class Amp2Db(object):
 
@@ -580,9 +588,16 @@ class M2F(object):
 Converts MEL Frequency to MFCC.
 """
 class M2MFCC(object):
+
+    def __init__(self, n_mfcc : int = 32):
+        self.n_mfcc = n_mfcc
+
     def __call__(self, spec_m):
         device = spec_m.device
+        spec_m = 10 * torch.log10(spec_m)
+        spec_m[spec_m == float('-inf')] = 0
         if isinstance(spec_m, torch.Tensor):
             spec_m = spec_m.cpu().numpy()
         mfcc = scipy.fftpack.dct(spec_m, axis=-1)
+        mfcc = mfcc[:, :, 1:self.n_mfcc+1]
         return torch.from_numpy(mfcc).to(device)

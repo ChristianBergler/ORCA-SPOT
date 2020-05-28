@@ -15,7 +15,6 @@ import pathlib
 import subprocess
 import numpy as np
 import data.transforms as T
-
 import torch
 import torch.utils.data
 import torch.multiprocessing as mp
@@ -540,8 +539,9 @@ class Dataset(AudioDataset):
             self.t_compr_f = T.F2M(sr=sr, n_mels=n_freq_bins, f_min=f_min, f_max=f_max)
         elif self.freq_compression == "mfcc":
             self.t_compr_f = T.Compose(
-                T.F2M(sr=sr, n_mels=n_freq_bins, f_min=f_min, f_max=f_max), T.M2MFCC()
+                T.F2M(sr=sr, n_mels=n_freq_bins, f_min=f_min, f_max=f_max)
             )
+            self.t_compr_mfcc = T.M2MFCC(n_mfcc=32)
         else:
             raise "Undefined frequency compression"
         if augmentation:
@@ -563,6 +563,7 @@ class Dataset(AudioDataset):
             min_level_db=DefaultSpecDatasetOps["min_level_db"],
             ref_level_db=DefaultSpecDatasetOps["ref_level_db"],
         )
+        self.t_norm_mm = T.MinMaxNormalize()
         self.t_subseq = T.PaddedSubsequenceSampler(seq_len, dim=1, random=augmentation)
 
     """
@@ -587,12 +588,20 @@ class Dataset(AudioDataset):
             self.augmentation and self.t_addnoise is not None
         ):
             sample, ground_truth = self.t_addnoise(sample)
-            ground_truth = self.t_compr_a(ground_truth)
-            ground_truth = self.t_norm(ground_truth)
+            if self.freq_compression != "mfcc":
+                ground_truth = self.t_compr_a(ground_truth)
+                ground_truth = self.t_norm(ground_truth)
+            else:
+                ground_truth = self.t_compr_mfcc(ground_truth)
+                ground_truth = self.t_norm_mm(ground_truth)
         else:
             ground_truth = None
-        sample = self.t_compr_a(sample)
-        sample = self.t_norm(sample)
+        if self.freq_compression != "mfcc":
+            sample = self.t_compr_a(sample)
+            sample = self.t_norm(sample)
+        else:
+            sample = self.t_compr_mfcc(sample)
+            sample = self.t_norm_mm(sample)
         if ground_truth is not None:
             stacked = torch.cat((sample, ground_truth), dim=0)
             stacked = self.t_subseq(stacked)
