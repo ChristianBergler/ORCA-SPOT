@@ -388,8 +388,7 @@ if __name__ == "__main__":
         "accuracy": m.Accuracy(ARGS.device),
         "f1": m.F1Score(ARGS.device),
         "precision": m.Precision(ARGS.device),
-        "recall": m.Recall(ARGS.device),
-        "TPR": m.TPR(ARGS.device),
+        "TPR": m.Recall(ARGS.device),
         "FPR": m.FPR(ARGS.device),
     }
 

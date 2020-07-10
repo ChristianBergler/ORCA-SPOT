@@ -48,6 +48,7 @@ class Logger(metaclass=Singleton):
         self._logger = logging.getLogger(name)
         self._logger.setLevel(level)
         self._logger.addHandler(self._handler)
+        self._logger.propagate = False
         self._listener.start()
 
     def close(self):

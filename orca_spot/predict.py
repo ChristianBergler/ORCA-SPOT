@@ -127,7 +127,7 @@ if __name__ == "__main__":
         model = model.cuda()
     model.eval()
 
-    sr = 44100
+    sr = dataOpts['sr']
     hop_length = dataOpts["hop_length"]
     n_fft = dataOpts["n_fft"]
 

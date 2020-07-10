@@ -258,7 +258,7 @@ class Trainer:
                     for metric in metrics.values():
                         metric.update(call_label, prediction)
 
-            if i % 2 == 0:
+            if i == 0:
                 self.write_summaries(
                     features=features,
                     labels=call_label,
@@ -338,7 +338,7 @@ class Trainer:
                     if auc is not None:
                         auc.add(score, call_label)
 
-                if i % 2 == 0:
+                if i == 0:
                     self.write_summaries(
                         features=features,
                         labels=call_label,
@@ -359,7 +359,7 @@ class Trainer:
         )
 
         if call_label is not None and auc is not None:
-            self.write_roc_curve_summary(*auc.value(), epoch + 1, phase=phase)
+            self.write_roc_curve_summary(*auc.value(), epoch, phase=phase)
 
         self.writer.flush()
 
@@ -383,7 +383,7 @@ class Trainer:
                 labels=labels,
                 prediction=prediction,
                 file_names=file_names,
-                epoch=epoch + 1,
+                epoch=epoch,
                 phase=phase,
             )
 
