@@ -72,6 +72,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--jit_load",
+    dest="jit_load",
+    action="store_true",
+    help="Load model via torch jit (otherwise via torch load).",
+)
+
+parser.add_argument(
     "--no_cuda",
     dest="cuda",
     action="store_false",
@@ -111,15 +118,30 @@ if __name__ == "__main__":
         )
         dataOpts = DefaultSpecDatasetOps
     else:
-        model_dict = torch.load(ARGS.model_path)
-        encoder = Encoder(model_dict["encoderOpts"])
-        encoder.load_state_dict(model_dict["encoderState"])
-        classifier = Classifier(model_dict["classifierOpts"])
-        classifier.load_state_dict(model_dict["classifierState"])
-        model = nn.Sequential(
-            OrderedDict([("encoder", encoder), ("classifier", classifier)])
-        )
-        dataOpts = model_dict["dataOpts"]
+        if ARGS.jit_load:
+            extra_files = {}
+            extra_files['dataOpts'] = ''
+            extra_files['encoderOpts'] = ''
+            extra_files['classifierOpts'] = ''
+            model = torch.jit.load(ARGS.model_path, _extra_files=extra_files)
+            encoder = model.encoder
+            classifier = model.classifier
+            encoderState = encoder.state_dict()
+            classifierState = classifier.state_dict()
+            dataOpts = eval(extra_files['dataOpts'])
+            encoderOpts = eval(extra_files['encoderOpts'])
+            classifierOpts = eval(extra_files['classifierOpts'])
+        else:
+            model_dict = torch.load(ARGS.model_path)
+            dataOpts = model_dict["dataOpts"]
+            encoder = Encoder(model_dict["encoderOpts"])
+            encoder.load_state_dict(model_dict["encoderState"])
+            classifier = Classifier(model_dict["classifierOpts"])
+            classifier.load_state_dict(model_dict["classifierState"])
+            model = nn.Sequential(
+                OrderedDict([("encoder", encoder), ("classifier", classifier)])
+            )
+
 
     log.info(model)
 
@@ -180,7 +202,7 @@ if __name__ == "__main__":
                     t_end = min(t_start + sequence_len - 1, dataset.n_frames - 1)
                     log.debug("start extract={}".format(t_start))
                     log.debug("end extract={}".format(t_end))
-                    prob = torch.nn.functional.softmax(out).numpy()[n, 1]
+                    prob = torch.nn.functional.softmax(out, dim=1).numpy()[n, 1]
                     pred = int(prob >= ARGS.threshold)
                     log.info(
                         "time={}-{}, pred={}, prob={}".format(

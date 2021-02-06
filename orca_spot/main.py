@@ -106,6 +106,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--jit_save",
+    dest="jit_save",
+    action="store_true",
+    help="Save model via torch.jit save functionality.",
+)
+
+parser.add_argument(
     "--max_train_epochs", type=int, default=500, help="The number of epochs to train for the classifier."
 )
 
@@ -262,11 +269,12 @@ def get_audio_files():
     return audio_files
 
 """
-Save the trained model and corresponding options.
+Save the trained model and corresponding options either via torch.jit and/or torch.save.
 """
-def save_model(encoder, encoderOpts, classifier, classifierOpts, dataOpts, path):
+def save_model(encoder, encoderOpts, classifier, classifierOpts, dataOpts, path, model, use_jit=False):
     encoder = encoder.cpu()
     classifier = classifier.cpu()
+    model = model.cpu()
     encoder_state_dict = encoder.state_dict()
     classifier_state_dict = classifier.state_dict()
 
@@ -279,7 +287,18 @@ def save_model(encoder, encoderOpts, classifier, classifierOpts, dataOpts, path)
     }
     if not os.path.isdir(ARGS.model_dir):
         os.makedirs(ARGS.model_dir)
-    torch.save(save_dict, path)
+    if use_jit:
+        extra_files = {}
+        example = torch.rand(1, 1, 128, 256)
+        extra_files['dataOpts'] = dataOpts.__str__()
+        extra_files['encoderOpts'] = encoderOpts.__str__()
+        extra_files['classifierOpts'] = classifierOpts.__str__()
+        model = torch.jit.trace(model, example)
+        torch.jit.save(model, path, _extra_files=extra_files)
+        log.debug("Model successfully saved via torch jit: " + str(path))
+    else:
+        torch.save(save_dict, path)
+        log.debug("Model successfully saved via torch save: " + str(path))
 
 """
 Main function to compute data preprocessing, network training, evaluation, and saving.
@@ -344,7 +363,7 @@ if __name__ == "__main__":
             n_fft=dataOpts["n_fft"],
             hop_length=dataOpts["hop_length"],
             n_freq_bins=dataOpts["n_freq_bins"],
-            freq_compression=ARGS.freq_compression,
+            freq_compression=dataOpts["freq_compression"],
             f_min=dataOpts["fmin"],
             f_max=dataOpts["fmax"],
             seq_len=sequence_len,
@@ -426,10 +445,8 @@ if __name__ == "__main__":
 
     classifier = model.classifier
 
-    path = os.path.join(ARGS.model_dir, "model.pk")
+    path = os.path.join(ARGS.model_dir, "orca-spot.pk")
 
-    save_model(
-        encoder, encoderOpts, classifier, classifierOpts, dataOpts, path
-    )
+    save_model(encoder, encoderOpts, classifier, classifierOpts, dataOpts, path, model, use_jit=ARGS.jit_save)
 
     log.close()

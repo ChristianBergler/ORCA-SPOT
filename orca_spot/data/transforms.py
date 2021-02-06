@@ -120,6 +120,7 @@ class Spectrogram(object):
             window=self.window,
             center=self.center,
             onesided=True,
+            return_complex=False
         ).transpose(1, 2)
         S /= self.window.pow(2).sum().sqrt()
         S = S.pow(2).sum(-1)
@@ -235,7 +236,7 @@ class Amp2Db(object):
         else:
             min_level_db = -min_level_db if min_level_db > 0 else min_level_db
             self.min_level = torch.tensor(
-                np.exp(min_level_db / self.multiplier * np.log(10))
+                np.exp(min_level_db / self.multiplier * np.log(10)), dtype=torch.float
             )
 
     def __call__(self, spec):

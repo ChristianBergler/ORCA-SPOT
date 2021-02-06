@@ -45,7 +45,8 @@ def prepare_img(img, num_images=4, file_names=None):
                         os.path.basename(file_names[i]),
                         (255, 255, 255),
                     )
-                    tmp[i] = torch.from_numpy(np.asarray(pil))
+                    np_pil = np.asarray(pil).copy()
+                    tmp[i] = torch.as_tensor(np_pil)
                 except TypeError:
                     pass
             tmp = tmp.permute(0, 3, 1, 2)
