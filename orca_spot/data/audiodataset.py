@@ -39,7 +39,7 @@ DefaultSpecDatasetOps = {
     "n_freq_bins": 160,
     "fmin": 500,
     "fmax": 10000,
-    "freq_compression": "mel",
+    "freq_compression": "linear",
     "min_level_db": -100,
     "ref_level_db": 20,
 }
