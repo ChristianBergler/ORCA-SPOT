@@ -160,6 +160,8 @@ if __name__ == "__main__":
 
     fmin = dataOpts["fmin"]
     fmax = dataOpts["fmax"]
+    freq_cmpr = dataOpts["freq_compression"]
+
     log.debug("dataOpts: " + str(dataOpts))
     sequence_len = int(ceil(ARGS.sequence_len * sr))
     hop = int(ceil(ARGS.hop * sr))
@@ -176,6 +178,7 @@ if __name__ == "__main__":
             fft_size=n_fft,
             fft_hop=hop_length,
             n_freq_bins=n_freq_bins,
+            freq_compression=freq_cmpr,
             f_min=fmin,
             f_max=fmax,
         )

@@ -222,6 +222,8 @@ class MinMaxNormalize(object):
 
     def __call__(self, spectrogram):
         spectrogram -= spectrogram.min()
+        if spectrogram.max().item() == 0.0:
+            return spectrogram
         spectrogram /= spectrogram.max()
         return spectrogram
 
