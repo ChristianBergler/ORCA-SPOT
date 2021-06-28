@@ -12,8 +12,8 @@ import csv
 import glob
 import random
 import pathlib
-import subprocess
 import numpy as np
+import soundfile as sf
 import data.transforms as T
 import torch
 import torch.utils.data
@@ -82,23 +82,19 @@ class _ParallelFilter(object):
                     yield c
 
 """
-Analyzing loudness criteria of each audio file by using linux tool 'sox' and checking maximum amplitude
-(if sox is not available on your system you can comment out the 'get_broken_audio_files' function or replace that part 
-by your own implementation - default: get_broken_audio_files is not used)
+Analyzing loudness criteria of each audio file by checking maximum amplitude (default: 1e-3)
 """
 def _loudness_criteria(file_name: str, working_dir: str = None):
     if working_dir is not None:
         file_path = os.path.join(working_dir, file_name)
     else:
         file_path = file_name
-    cmd = ["sox", file_path, "-n", "stat"]
-    out = subprocess.Popen(cmd, stderr=subprocess.PIPE).communicate()[1].decode("utf-8")
-    for line in out.splitlines():
-        if line.startswith("Maximum amplitude:"):
-            if float(line[18:].strip()) < 1e-3:
-                return True, file_name
-            break
-    return False, None
+    y, __ = sf.read(file_path, always_2d=True, dtype="float32")
+    max_ampl = y.max()
+    if max_ampl < 1e-3:
+        return True, file_name
+    else:
+        return False, None
 
 """
 Filtering all audio files in previous which do not fulfill the loudness criteria

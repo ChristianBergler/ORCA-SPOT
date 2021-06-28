@@ -174,7 +174,7 @@ parser.add_argument(
 
 """ Input parameters """
 parser.add_argument(
-    "--filter_broken_audio", action="store_true", help="Filter by a minimum loudness using SoX (Sound exchange) toolkit (option could only be used if SoX is installed)."
+    "--filter_broken_audio", action="store_true", help="Filter files which are below a minimum loudness of 1e-3 (float32)."
 )
 
 parser.add_argument(
