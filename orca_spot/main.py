@@ -197,6 +197,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--min_max_norm",
+    dest="min_max_norm",
+    action="store_true",
+    help="activates min-max normalization instead of default 0/1-dB-normalization.",
+)
+
+parser.add_argument(
     "--n_fft",
     type=int,
     default=4096,
@@ -370,6 +377,7 @@ if __name__ == "__main__":
             augmentation=ARGS.augmentation if split == "train" else False,
             noise_files=noise_files,
             dataset_name=split,
+            min_max_normalize=ARGS.min_max_norm
         )
         for split in split_fracs.keys()
     }

@@ -79,6 +79,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--min_max_norm",
+    dest="min_max_norm",
+    action="store_true",
+    help="activates min-max normalization instead of default 0/1-dB-normalization.",
+)
+
+parser.add_argument(
     "--no_cuda",
     dest="cuda",
     action="store_false",
@@ -163,6 +170,12 @@ if __name__ == "__main__":
     freq_cmpr = dataOpts["freq_compression"]
 
     log.debug("dataOpts: " + str(dataOpts))
+
+    if ARGS.min_max_norm:
+        log.debug("Init min-max-normalization activated")
+    else:
+        log.debug("Init 0/1-dB-normalization activated")
+
     sequence_len = int(ceil(ARGS.sequence_len * sr))
     hop = int(ceil(ARGS.hop * sr))
 
@@ -181,6 +194,7 @@ if __name__ == "__main__":
             freq_compression=freq_cmpr,
             f_min=fmin,
             f_max=fmax,
+            min_max_normalize=ARGS.min_max_norm
         )
         data_loader = torch.utils.data.DataLoader(
             dataset,

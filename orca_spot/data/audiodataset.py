@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 Data preprocessing default options
 """
 DefaultSpecDatasetOps = {
-    "sr": 44100,
+    "sr": 256000,
     "preemphases": 0.98,
     "n_fft": 4096,
     "hop_length": 441,
@@ -454,6 +454,7 @@ class Dataset(AudioDataset):
         seq_len=128,
         augmentation=False,
         noise_files=[],
+        min_max_normalize=False,
         *args,
         **kwargs
     ):
@@ -555,11 +556,18 @@ class Dataset(AudioDataset):
             else:
                 self.t_addnoise = None
         self.t_compr_a = T.Amp2Db(min_level_db=DefaultSpecDatasetOps["min_level_db"])
-        self.t_norm = T.Normalize(
-            min_level_db=DefaultSpecDatasetOps["min_level_db"],
-            ref_level_db=DefaultSpecDatasetOps["ref_level_db"],
-        )
-        self.t_norm_mm = T.MinMaxNormalize()
+
+        if min_max_normalize:
+            self.t_norm = T.MinMaxNormalize()
+            self._logger.debug("Init min-max-normalization activated")
+        else:
+            self.t_norm = T.Normalize(
+                min_level_db=DefaultSpecDatasetOps["min_level_db"],
+                ref_level_db=DefaultSpecDatasetOps["ref_level_db"],
+            )
+            self._logger.debug("Init 0/1-dB-normalization activated")
+
+
         self.t_subseq = T.PaddedSubsequenceSampler(seq_len, dim=1, random=augmentation)
 
     """
@@ -586,18 +594,16 @@ class Dataset(AudioDataset):
             sample, ground_truth = self.t_addnoise(sample)
             if self.freq_compression != "mfcc":
                 ground_truth = self.t_compr_a(ground_truth)
-                ground_truth = self.t_norm(ground_truth)
             else:
                 ground_truth = self.t_compr_mfcc(ground_truth)
-                ground_truth = self.t_norm_mm(ground_truth)
+            ground_truth = self.t_norm(ground_truth)
         else:
             ground_truth = None
         if self.freq_compression != "mfcc":
             sample = self.t_compr_a(sample)
-            sample = self.t_norm(sample)
         else:
             sample = self.t_compr_mfcc(sample)
-            sample = self.t_norm_mm(sample)
+        sample = self.t_norm(sample)
         if ground_truth is not None:
             stacked = torch.cat((sample, ground_truth), dim=0)
             stacked = self.t_subseq(stacked)
@@ -661,6 +667,7 @@ class StridedAudioDataset(torch.utils.data.Dataset):
         freq_compression: str = "linear",
         f_min: int = 200,
         f_max: int = 18000,
+        min_max_normalize=False
     ):
         self.sequence_len = sequence_len
         self.hop = hop
@@ -683,12 +690,17 @@ class StridedAudioDataset(torch.utils.data.Dataset):
         else:
             raise "Undefined frequency compression"
         self.t.append(T.Amp2Db(min_level_db=DefaultSpecDatasetOps["min_level_db"]))
-        self.t.append(
-            T.Normalize(
-                min_level_db=DefaultSpecDatasetOps["min_level_db"],
-                ref_level_db=DefaultSpecDatasetOps["ref_level_db"],
+
+        if min_max_normalize:
+            self.t.append(T.MinMaxNormalize())
+        else:
+            self.t.append(
+                T.Normalize(
+                    min_level_db=DefaultSpecDatasetOps["min_level_db"],
+                    ref_level_db=DefaultSpecDatasetOps["ref_level_db"],
+                )
             )
-        )
+
         self.t = T.Compose(self.t)
 
 
