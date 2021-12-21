@@ -1,8 +1,9 @@
 """
 Module: utils.py
 Authors: Christian Bergler, Hendrik Schroeter
+License: GNU General Public License v3.0
 Institution: Friedrich-Alexander-University Erlangen-Nuremberg, Department of Computer Science, Pattern Recognition Lab
-Last Access: 12.12.2019
+Last Access: 21.12.2021
 """
 
 import torch
@@ -12,7 +13,8 @@ from .cm import apply_cm, viridis_cm
 """
 Flip data along give dimension
 Code from https://github.com/pytorch/pytorch/issues/229
-Access Data: 12.09.2018, Last Access Date: 08.12.2019
+Access Data: 12.09.2018, Last Access Date: 21.12.2021
+Changes: Modified by Christian Bergler and Hendrik Schroeter (12.09.2018)
 """
 def flip(x, dim=-1):
     indices = [slice(None)] * x.dim()

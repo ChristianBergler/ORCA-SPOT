@@ -1,8 +1,9 @@
 """
 Module: logging.py
 Authors: Christian Bergler, Hendrik Schroeter
+License: GNU General Public License v3.0
 Institution: Friedrich-Alexander-University Erlangen-Nuremberg, Department of Computer Science, Pattern Recognition Lab
-Last Access: 12.12.2019
+Last Access: 21.12.2021
 """
 
 import logging

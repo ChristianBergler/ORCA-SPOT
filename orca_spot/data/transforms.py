@@ -1,8 +1,9 @@
 """
 Module: transforms.py
 Authors: Christian Bergler, Hendrik Schroeter
+License: GNU General Public License v3.0
 Institution: Friedrich-Alexander-University Erlangen-Nuremberg, Department of Computer Science, Pattern Recognition Lab
-Last Access: 12.12.2019
+Last Access: 21.12.2021
 """
 
 import io
@@ -227,7 +228,39 @@ class MinMaxNormalize(object):
         spectrogram /= spectrogram.max()
         return spectrogram
 
-"""Turns a spectrogram from the power/amplitude scale to the decibel scale."""
+"""Turns a spectrogram from the power/amplitude scale to the decibel scale.
+
+Code from https://github.com/pytorch/audio/blob/5787787edc/torchaudio/transforms.py
+
+BSD 2-Clause License
+
+Copyright (c) 2017 Facebook Inc. (Soumith Chintala), 
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Access Data: 12.09.2018, Last Access Date: 21.12.2021
+Changes: Modified by Christian Bergler and Hendrik Schroeter (12.09.2018)
+"""
 class Amp2Db(object):
 
     def __init__(self, min_level_db=None, stype="power"):
@@ -500,7 +533,35 @@ def _mel2hz(mel):
 """
 Create melbank.
 Code from https://github.com/pytorch/audio/blob/5787787edc/torchaudio/transforms.py
-Access Data: 12.09.2018, Last Access Date: 08.12.2019
+
+BSD 2-Clause License
+
+Copyright (c) 2017 Facebook Inc. (Soumith Chintala), 
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Access Data: 12.09.2018, Last Access Date: 21.12.2021
+Changes: Modified by Christian Bergler and Hendrik Schroeter (12.09.2018)
 """
 def _melbank(sr, n_fft, n_mels=128, f_min=0.0, f_max=None, inverse=False):
     m_min = 0. if f_min == 0 else _hz2mel(f_min)
@@ -535,7 +596,35 @@ def _melbank(sr, n_fft, n_mels=128, f_min=0.0, f_max=None, inverse=False):
 """
 This turns a normal STFT into a MEL Frequency STFT, using a conversion matrix.  This uses triangular filter banks.
 Code from https://github.com/pytorch/audio/blob/5787787edc/torchaudio/transforms.py
-Access Data: 12.09.2018, Last Access Date: 08.12.2019
+
+BSD 2-Clause License
+
+Copyright (c) 2017 Facebook Inc. (Soumith Chintala), 
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Access Data: 12.09.2018, Last Access Date: 21.12.2021
+Changes: Modified by Christian Bergler and Hendrik Schroeter (12.09.2018)
 """
 class F2M(object):
 
