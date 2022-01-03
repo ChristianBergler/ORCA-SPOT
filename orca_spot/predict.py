@@ -169,6 +169,8 @@ if __name__ == "__main__":
     fmin = dataOpts["fmin"]
     fmax = dataOpts["fmax"]
     freq_cmpr = dataOpts["freq_compression"]
+    DefaultSpecDatasetOps["min_level_db"] = dataOpts["min_level_db"]
+    DefaultSpecDatasetOps["ref_level_db"] = dataOpts["ref_level_db"]
 
     log.debug("dataOpts: " + str(dataOpts))
 
