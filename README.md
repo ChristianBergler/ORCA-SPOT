@@ -11,7 +11,7 @@ We are currently in the process to publish a paper as a general guidance which a
 If ORCA-SPOT is used for your own research please cite the following publication: ORCA-SPOT: An Automatic Killer Whale Sound Detection Toolkit Using Deep Learning (https://www.nature.com/articles/s41598-019-47335-w)
 
 ```
-@article{bergler:2019,
+@article{Bergler-OP-2019,
 author = {Bergler, Christian and Schröter, Hendrik and Cheng, Rachael Xi and Barth, Volker and Weber, Michael and Noeth, Elmar and Hofer, Heribert and Maier, Andreas},
 year = {2019},
 month = {12},
