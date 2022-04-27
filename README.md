@@ -27,7 +27,7 @@ GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007 (GNU GPLv3)
 
 ## Python, Python Libraries, and Version
 ORCA-SPOT is a deep learning algorithm which was implemented in Python (Version=3.6) (Operating System: Linux) together with the deep learning framework PyTorch (Version=1.3.0, TorchVision=0.4.1). Moreover it requires the following Python libraries: Pillow, MatplotLib, Librosa, Soundfile, TensorboardX (recent versions).
-ORCA-SPOT is currently compatible with Python 3.8 and PyTorch (Version=1.9.0, TorchVision=0.10.0, TorchAudio=0.9.0)
+ORCA-SPOT is currently compatible with Python 3.8 and PyTorch (Version=1.11.0+cu113/cpu, TorchVision=0.12.0+cu113/cpu, TorchAudio=0.11.0+cu113/cpu)
 
 ## Required Filename Structure for Training
 In order to properly load and preprocess your data to train the network you need to prepare the filenames of your audio data clips to fit the following template/format:

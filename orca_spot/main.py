@@ -5,7 +5,7 @@ Module: main.py
 Authors: Christian Bergler, Hendrik Schroeter
 License: GNU General Public License v3.0
 Institution: Friedrich-Alexander-University Erlangen-Nuremberg, Department of Computer Science, Pattern Recognition Lab
-Last Access: 21.12.2021
+Last Access: 26.04.2022
 """
 
 import os
@@ -56,7 +56,6 @@ parser.add_argument(
     help="Log additional training and model information.",
 )
 
-""" Directory parameters """
 parser.add_argument(
     "--data_dir",
     type=str,
@@ -82,7 +81,10 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--log_dir", type=str, default=None, help="The directory to store the logs."
+    "--log_dir",
+    type=str,
+    default=None,
+    help="The directory to store the logs."
 )
 
 parser.add_argument(
@@ -98,7 +100,7 @@ parser.add_argument(
     help="Path to a directory with noise files used for data augmentation.",
 )
 
-""" Training parameters """
+
 parser.add_argument(
     "--start_from_scratch",
     dest="start_scratch",
@@ -114,7 +116,10 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--max_train_epochs", type=int, default=500, help="The number of epochs to train for the classifier."
+    "--max_train_epochs",
+    type=int,
+    default=500,
+    help="The number of epochs to train for the classifier."
 )
 
 parser.add_argument(
@@ -125,11 +130,17 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--batch_size", type=int, default=1, help="The number of images per batch."
+    "--batch_size",
+    type=int,
+    default=1,
+    help="The number of samples per batch."
 )
 
 parser.add_argument(
-    "--num_workers", type=int, default=4, help="Number of workers used in data-loading"
+    "--num_workers",
+    type=int,
+    default=4,
+    help="Number of workers used in data-loading"
 )
 
 parser.add_argument(
@@ -148,7 +159,10 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "--beta1", type=float, default=0.5, help="beta1 for the adam optimizer."
+    "--beta1",
+    type=float,
+    default=0.5,
+    help="beta1 for the adam optimizer."
 )
 
 parser.add_argument(
@@ -173,21 +187,24 @@ parser.add_argument(
     help="Early stopping (stop training) after N/epochs_per_eval epochs without any improvements on the validation set.",
 )
 
-""" Input parameters """
 parser.add_argument(
-    "--filter_broken_audio", action="store_true", help="Filter files which are below a minimum loudness of 1e-3 (float32)."
+    "--filter_broken_audio",
+    action="store_true",
+    help="Filter files which are below a minimum loudness of 1e-3 (float32)."
 )
 
 parser.add_argument(
-    "--sequence_len", type=int, default=1280, help="Sequence length in ms."
+    "--sequence_len",
+    type=int,
+    default=1280,
+    help="Sequence length in ms."
 )
 
 parser.add_argument(
     "--freq_compression",
     type=str,
     default="linear",
-    help="Frequency compression to reduce GPU memory usage. "
-    "Options: `'linear'` (default), '`mel`', `'mfcc'`",
+    help="Frequency compression to reduce GPU memory usage. Options: `'linear'` (default), '`mel`', `'mfcc'`",
 )
 
 parser.add_argument(
@@ -224,13 +241,19 @@ parser.add_argument(
     "Validation and test data will not be augmented.",
 )
 
-""" Network parameters """
 parser.add_argument(
-    "--resnet", dest="resnet_size", type=int, default=18, help="ResNet size"
+    "--resnet",
+    dest="resnet_size",
+    type=int,
+    default=18,
+    help="ResNet size"
 )
 
 parser.add_argument(
-    "--conv_kernel_size", nargs="*", type=int, help="Initial convolution kernel size."
+    "--conv_kernel_size",
+    nargs="*",
+    type=int,
+    help="Initial convolution kernel size."
 )
 
 parser.add_argument(
@@ -240,9 +263,17 @@ parser.add_argument(
     help="Use max pooling after the initial convolution layer.",
 )
 
+parser.add_argument(
+    "--sr",
+    type=int,
+    default=44100,
+    help="Target sampling rate.",
+)
+
+
 ARGS = parser.parse_args()
 ARGS.cuda = torch.cuda.is_available() and ARGS.cuda
-ARGS.device = torch.device("cuda") if ARGS.cuda else torch.device("cpu")
+device = torch.device("cuda") if ARGS.cuda else torch.device("cpu")
 
 if ARGS.conv_kernel_size is not None and len(ARGS.conv_kernel_size):
     ARGS.conv_kernel_size = ARGS.conv_kernel_size[0]
@@ -313,6 +344,72 @@ Main function to compute data preprocessing, network training, evaluation, and s
 """
 if __name__ == "__main__":
 
+    debug = ARGS.debug
+    data_dir = ARGS.data_dir
+    cache_dir = ARGS.cache_dir
+    model_dir = ARGS.model_dir
+    checkpoint_dir = ARGS.checkpoint_dir
+    log_dir = ARGS.log_dir
+    summary_dir = ARGS.summary_dir
+    noise_dir = ARGS.noise_dir
+    start_scratch = ARGS.start_scratch
+    jit_save = ARGS.jit_save
+    max_train_epochs = ARGS.max_train_epochs
+    epochs_per_eval = ARGS.epochs_per_eval
+    batch_size = ARGS.batch_size
+    num_workers = ARGS.num_workers
+    cuda = ARGS.cuda
+    lr = ARGS.lr
+    beta1 = ARGS.beta1
+    lr_patience_epochs = ARGS.lr_patience_epochs
+    lr_decay_factor = ARGS.lr_decay_factor
+    early_stopping_patience_epochs = ARGS.early_stopping_patience_epochs
+    filter_broken_audio = ARGS.filter_broken_audio
+    sequence_len = ARGS.sequence_len
+    freq_compression = ARGS.freq_compression
+    n_freq_bins = ARGS.n_freq_bins
+    min_max_norm = ARGS.min_max_norm
+    n_fft = ARGS.n_fft
+    hop_length = ARGS.hop_length
+    augmentation = ARGS.augmentation
+    resnet = ARGS.resnet_size
+    conv_kernel_size = ARGS.conv_kernel_size
+    max_pool = ARGS.max_pool
+    sr = ARGS.sr
+
+    log.info(f"Log additional training and model information: {debug}")
+    log.info(f"The path to the dataset directory: {data_dir}")
+    log.info(f"The path to the cache directory: {cache_dir}")
+    log.info(f"The directory where the model will be stored: {model_dir}")
+    log.info(f"The directory where the checkpoints will be stored: {checkpoint_dir}")
+    log.info(f"The directory to store the logs: {log_dir}")
+    log.info(f"The directory to store the tensorboard summaries: {summary_dir}")
+    log.info(f"Path to a directory with noise files used for data augmentation: {noise_dir}")
+    log.info(f"Start taining from scratch, i.e. do not use checkpoint to restore: {start_scratch}")
+    log.info(f"Save model via torch.jit save functionality: {jit_save}")
+    log.info(f"Maximum number of training epochs for the model: {max_train_epochs}")
+    log.info(f"The number of batches to run in between evaluations: {epochs_per_eval}")
+    log.info(f"The number of images per batch: {batch_size}")
+    log.info(f"Number of workers used in data-loading: {num_workers}")
+    log.info(f"GPU support: {cuda}")
+    log.info(f"Initial learning rate. Will get multiplied by the batch size: {lr}")
+    log.info(f"Beta1 for the adam optimizer: {beta1}")
+    log.info(f"Decay the learning rate after N/epochs_per_eval epochs without any improvements on the validation set: {lr_patience_epochs}")
+    log.info(f"Decay factor to apply to the learning rate: {lr_decay_factor}")
+    log.info(f"Early stopping (stop training) after N/epochs_per_eval epochs without any improvements on the validation set: {early_stopping_patience_epochs}")
+    log.info(f"Filter files which are below a minimum loudness of 1e-3 (float32): {filter_broken_audio}")
+    log.info(f"Sequence length in ms: {sequence_len}")
+    log.info(f"Frequency compression to reduce GPU memory usage: {freq_compression}")
+    log.info(f"Number of frequency bins after compression: {n_freq_bins}")
+    log.info(f"Spectrogram FFT size: {n_fft}")
+    log.info(f"Spectrogram FFT hop length: {hop_length}")
+    log.info(f"Activates min-max normalization instead of default 0/1-dB-normalization: {min_max_norm}")
+    log.info(f"Whether to augment the input data (during training only): {augmentation}")
+    log.info(f"ResNet size: {resnet}")
+    log.info(f"Initial convolution kernel size: {conv_kernel_size}")
+    log.info(f"Use max pooling after the initial convolution layer: {max_pool}")
+    log.info(f"Target sampling rate: {sr}")
+
     encoderOpts = DefaultEncoderOpts
     classifierOpts = DefaultClassifierOpts
     dataOpts = DefaultSpecDatasetOps
@@ -325,19 +422,19 @@ if __name__ == "__main__":
         if arg in dataOpts and value is not None:
             dataOpts[arg] = value
 
-    ARGS.lr *= ARGS.batch_size
+    lr *= batch_size
 
-    patience_lr = math.ceil(ARGS.lr_patience_epochs / ARGS.epochs_per_eval)
+    patience_lr = math.ceil(lr_patience_epochs / epochs_per_eval)
 
     patience_lr = int(max(1, patience_lr))
 
     log.debug("dataOpts: " + json.dumps(dataOpts, indent=4))
 
     sequence_len = int(
-        float(ARGS.sequence_len) / 1000 * dataOpts["sr"] / dataOpts["hop_length"]
+        float(sequence_len) / 1000 * dataOpts["sr"] / dataOpts["hop_length"]
     )
     log.debug("Training with sequence length: {}".format(sequence_len))
-    input_shape = (ARGS.batch_size, 1, dataOpts["n_freq_bins"], sequence_len)
+    input_shape = (batch_size, 1, dataOpts["n_freq_bins"], sequence_len)
 
     log.info("Setting up model")
 
@@ -352,21 +449,21 @@ if __name__ == "__main__":
 
     split_fracs = {"train": .7, "val": .15, "test": .15}
     input_data = DatabaseCsvSplit(
-        split_fracs, working_dir=ARGS.data_dir, split_per_dir=True
+        split_fracs, working_dir=data_dir, split_per_dir=True
     )
 
     audio_files = get_audio_files()
 
-    if ARGS.noise_dir:
-        noise_files = [str(p) for p in pathlib.Path(ARGS.noise_dir).glob("*.wav")]
+    if noise_dir:
+        noise_files = [str(p) for p in pathlib.Path(noise_dir).glob("*.wav")]
     else:
         noise_files = []
 
     datasets = {
         split: Dataset(
             file_names=input_data.load(split, audio_files),
-            working_dir=ARGS.data_dir,
-            cache_dir=ARGS.cache_dir,
+            working_dir=data_dir,
+            cache_dir=cache_dir,
             sr=dataOpts["sr"],
             n_fft=dataOpts["n_fft"],
             hop_length=dataOpts["hop_length"],
@@ -375,10 +472,10 @@ if __name__ == "__main__":
             f_min=dataOpts["fmin"],
             f_max=dataOpts["fmax"],
             seq_len=sequence_len,
-            augmentation=ARGS.augmentation if split == "train" else False,
+            augmentation=augmentation if split == "train" else False,
             noise_files=noise_files,
             dataset_name=split,
-            min_max_normalize=ARGS.min_max_norm
+            min_max_normalize=min_max_norm
         )
         for split in split_fracs.keys()
     }
@@ -386,9 +483,9 @@ if __name__ == "__main__":
     dataloaders = {
         split: torch.utils.data.DataLoader(
             datasets[split],
-            batch_size=ARGS.batch_size,
+            batch_size=batch_size,
             shuffle=True,
-            num_workers=ARGS.num_workers,
+            num_workers=num_workers,
             drop_last=False if split == "val" or split == "test" else True,
             pin_memory=True,
         )
@@ -402,26 +499,26 @@ if __name__ == "__main__":
         model=model,
         logger=log,
         prefix="classifier",
-        checkpoint_dir=ARGS.checkpoint_dir,
-        summary_dir=ARGS.summary_dir,
+        checkpoint_dir=checkpoint_dir,
+        summary_dir=summary_dir,
         n_summaries=4,
-        start_scratch=ARGS.start_scratch,
+        start_scratch=start_scratch,
     )
 
     metrics = {
-        "tp": m.TruePositives(ARGS.device),
-        "tn": m.TrueNegatives(ARGS.device),
-        "fp": m.FalsePositives(ARGS.device),
-        "fn": m.FalseNegatives(ARGS.device),
-        "accuracy": m.Accuracy(ARGS.device),
-        "f1": m.F1Score(ARGS.device),
-        "precision": m.Precision(ARGS.device),
-        "TPR": m.Recall(ARGS.device),
-        "FPR": m.FPR(ARGS.device),
+        "tp": m.TruePositives(device),
+        "tn": m.TrueNegatives(device),
+        "fp": m.FalsePositives(device),
+        "fn": m.FalseNegatives(device),
+        "accuracy": m.Accuracy(device),
+        "f1": m.F1Score(device),
+        "precision": m.Precision(device),
+        "TPR": m.Recall(device),
+        "FPR": m.FPR(device),
     }
 
     optimizer = optim.Adam(
-        model.parameters(), lr=ARGS.lr, betas=(ARGS.beta1, 0.999)
+        model.parameters(), lr=lr, betas=(beta1, 0.999)
     )
 
     metric_mode = "max"
@@ -429,7 +526,7 @@ if __name__ == "__main__":
         optimizer,
         mode=metric_mode,
         patience=patience_lr,
-        factor=ARGS.lr_decay_factor,
+        factor=lr_decay_factor,
         threshold=1e-3,
         threshold_mode="abs",
     )
@@ -441,10 +538,10 @@ if __name__ == "__main__":
         loss_fn=nn.CrossEntropyLoss(),
         optimizer=optimizer,
         scheduler=lr_scheduler,
-        n_epochs=ARGS.max_train_epochs,
-        val_interval=ARGS.epochs_per_eval,
-        patience_early_stopping=ARGS.early_stopping_patience_epochs,
-        device=ARGS.device,
+        n_epochs=max_train_epochs,
+        val_interval=epochs_per_eval,
+        patience_early_stopping=early_stopping_patience_epochs,
+        device=device,
         metrics=metrics,
         val_metric="accuracy",
         val_metric_mode=metric_mode,
@@ -454,8 +551,8 @@ if __name__ == "__main__":
 
     classifier = model.classifier
 
-    path = os.path.join(ARGS.model_dir, "orca-spot.pk")
+    path = os.path.join(model_dir, "ORCA-SPOT.pk")
 
-    save_model(encoder, encoderOpts, classifier, classifierOpts, dataOpts, path, model, use_jit=ARGS.jit_save)
+    save_model(encoder, encoderOpts, classifier, classifierOpts, dataOpts, path, model, use_jit=jit_save)
 
     log.close()
