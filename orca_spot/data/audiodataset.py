@@ -520,7 +520,7 @@ class Dataset(AudioDataset):
                 spec_transform=T.Compose(spec_transforms),
                 n_fft=n_fft,
                 hop_length=hop_length,
-                file_reader=AsyncFileReader(),
+                file_reader=self.file_reader,
             )
         if augmentation:
             self._logger.debug("Init augmentation transforms for time and pitch shift")
